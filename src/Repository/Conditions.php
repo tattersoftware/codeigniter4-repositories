@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories;
+namespace Tatter\Repositories\Repository;
 
 use InvalidArgumentException;
 use IteratorAggregate;

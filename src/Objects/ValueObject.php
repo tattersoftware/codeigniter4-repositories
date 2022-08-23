@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories;
+namespace Tatter\Repositories\Objects;
 
 use InvalidArgumentException;
 
