@@ -4,24 +4,40 @@ declare(strict_types=1);
 
 namespace Tatter\Repositories\Repository;
 
-use CodeIgniter\Database\BaseConnection;
+use Tatter\Repositories\Conditions\Conditions;
+use Tatter\Repositories\Objects\Entity;
+use Tatter\Repositories\Persistence\SQLDatabase;
 
 /**
+ * Table Repository Abstract Class
+ *
+ * A repository that sits in front of a single
+ * database table, similar to CodeIgniter\Model.
+ *
  * @template T of Entity
  */
 abstract class TableRepository implements RepositoryInterface
 {
+    public const TABLE = '';
+
     /**
      * @var class-string<T>
      */
-    public const ENTITY = '';
-    public const TABLE  = '';
+    public const ENTITY = Entity::class;
 
-    protected BaseConnection $connection;
+    protected SQLDatabase $database;
 
-    public function __construct(BaseConnection $connection)
+    final public function __construct()
     {
-        $this->connection = $connection;
+        $this->database = SQLDatabase::fromTableName(static::TABLE);
+        $this->initialize();
+    }
+
+    /**
+     * Initializes any class extension requirements after construction.
+     */
+    public function initialize(): void
+    {
     }
 
     /**
@@ -31,11 +47,15 @@ abstract class TableRepository implements RepositoryInterface
      */
     public function get($id): ?Entity
     {
-        return $this->connection
-            ->table(static::TABLE)
-            ->where(static::TABLE . '.' . static::ENTITY::IDENTIFIER, $id)
-            ->get()
-            ->getFirstRow(static::ENTITY);
+        $conditions = Conditions::fromIdentity(static::ENTITY, $id);
+        $result     = $this->database->first($conditions);
+        if ($result === null) {
+            return null;
+        }
+
+        $class = static::ENTITY;
+
+        return $class::fromDTO($result);
     }
 
     /**
@@ -43,8 +63,13 @@ abstract class TableRepository implements RepositoryInterface
      *
      * @returns iterable<T>
      */
-    public function list(Criteria $criteria = null): iterable
+    public function list(?Conditions $conditions = null): iterable
     {
+        $conditions ??= new Conditions();
+
+        foreach ($this->database->get($conditions) as $dto) {
+            yield Entity::fromDTO($dto);
+        }
     }
 
     /**
@@ -54,38 +79,16 @@ abstract class TableRepository implements RepositoryInterface
      *
      * @throws RepositoryException
      */
-    public function save(Entity $entity)
+    public function save(Entity $entity): void
     {
-        $entity->getId() === null
-            ? $this->insert($entity->toArray())
-            : $this->update($entity->getId(), $entity->toArray());
-    }
+        if (null === $id = $entity->getId()) {
+            $this->database->insert($entity->toDTO());
 
-    /**
-     * Inserts a new row into the database.
-     *
-     * @param array<string, mixed> $data
-     */
-    protected function insert(array $data): void
-    {
-        return $this->connection
-            ->table(static::TABLE)
-            ->insert($data);
-    }
+            return;
+        }
 
-    /**
-     * Updates the row in the database.
-     *
-     * @param string|int $id
-     * @param array<string, mixed> $data
-     */
-    protected function update($id, array $data): void
-    {
-        return $this->connection
-            ->table(static::TABLE)
-            ->update($data, [
-                static::ENTITY::IDENTIFIER => $id,
-            ]);
+        $conditions = Conditions::fromIdentity(get_class($entity), $id);
+        $this->database->update($conditions, $entity->toDTO());
     }
 
     /**
@@ -95,20 +98,13 @@ abstract class TableRepository implements RepositoryInterface
      *
      * @throws RepositoryException
      */
-    public function remove(Entity $entity);
+    public function remove(Entity $entity): void
     {
-        return $this->connection
-            ->table(static::TABLE)
-            ->where($entity::IDENTIFIER, $entity->getId())
-            ->delete();
-    }
+        if (null === $id = $entity->getId()) {
+            return;
+        }
 
-    /**
-     * Removes matching items from persistence.
-     *
-     * @throws RepositoryException
-     */
-    public function removeWhere(Criteria $criteria)
-    {
+        $conditions = Conditions::fromIdentity(get_class($entity), $id);
+        $this->database->delete($conditions);
     }
 }
