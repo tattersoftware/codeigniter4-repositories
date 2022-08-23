@@ -87,7 +87,7 @@ abstract class TableRepository implements RepositoryInterface
             return;
         }
 
-        $conditions = Conditions::fromIdentity(get_class($entity), $id);
+        $conditions = Conditions::fromIdentity($entity::class, $id);
         $this->database->update($conditions, $entity->toDTO());
     }
 
@@ -104,7 +104,7 @@ abstract class TableRepository implements RepositoryInterface
             return;
         }
 
-        $conditions = Conditions::fromIdentity(get_class($entity), $id);
+        $conditions = Conditions::fromIdentity($entity::class, $id);
         $this->database->delete($conditions);
     }
 }

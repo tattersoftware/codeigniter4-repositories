@@ -15,11 +15,9 @@ interface RepositoryInterface
     /**
      * Gets an item from persistence by its ID.
      *
-     * @param int|string $id
-     *
      * @return T|null
      */
-    public function get($id): ?Entity;
+    public function get(int|string $id): ?Entity;
 
     /**
      * Gets all items, optionally filtering on the set of criteria.

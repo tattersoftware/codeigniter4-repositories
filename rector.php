@@ -36,7 +36,7 @@ use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->sets([SetList::DEAD_CODE, LevelSetList::UP_TO_PHP_74, PHPUnitSetList::PHPUNIT_SPECIFIC_METHOD, PHPUnitSetList::PHPUNIT_80]);
+    $rectorConfig->sets([SetList::DEAD_CODE, LevelSetList::UP_TO_PHP_80, PHPUnitSetList::PHPUNIT_SPECIFIC_METHOD, PHPUnitSetList::PHPUNIT_80]);
     $rectorConfig->parallel();
     // The paths to refactor (can also be supplied with CLI arguments)
     $rectorConfig->paths([
@@ -59,7 +59,7 @@ return static function (RectorConfig $rectorConfig): void {
     }
 
     // Set the target version for refactoring
-    $rectorConfig->phpVersion(PhpVersion::PHP_74);
+    $rectorConfig->phpVersion(PhpVersion::PHP_80);
 
     // Auto-import fully qualified class names
     $rectorConfig->importNames();
@@ -70,9 +70,6 @@ return static function (RectorConfig $rectorConfig): void {
 
         JsonThrowOnErrorRector::class,
         StringifyStrNeedlesRector::class,
-
-        // Note: requires php 8
-        RemoveUnusedPromotedPropertyRector::class,
 
         // Ignore tests that might make calls without a result
         RemoveEmptyMethodCallRector::class => [

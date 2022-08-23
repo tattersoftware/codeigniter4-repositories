@@ -19,8 +19,6 @@ use Tatter\Repositories\Objects\DTO;
  */
 final class SQLDatabase
 {
-    private BaseBuilder $builder;
-
     /**
      * Creates a new SQL persistence object specific to a table.
      */
@@ -31,9 +29,8 @@ final class SQLDatabase
         return new self($builder);
     }
 
-    private function __construct(BaseBuilder $builder)
+    private function __construct(private BaseBuilder $builder)
     {
-        $this->builder = $builder;
     }
 
     /**

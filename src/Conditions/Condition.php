@@ -19,13 +19,12 @@ final class Condition
         '!in',
     ];
 
-    private string $field;
     private string $operator;
 
     /**
      * @var array<int, scalar|null>|scalar|null
      */
-    private $value;
+    private array|bool|string|int|float|null $value;
 
     public static function fromString(string $input): self
     {
@@ -44,7 +43,7 @@ final class Condition
     /**
      * @param array<int, scalar|null>|scalar|null $value
      */
-    public function __construct(string $field, string $operator, $value)
+    public function __construct(private string $field, string $operator, $value)
     {
         if (! in_array($operator, self::OPERATORS, true)) {
             throw new InvalidArgumentException('Unknown conditional operation: ' . $operator);
@@ -54,8 +53,6 @@ final class Condition
         if (is_array($value) && ! in_array($operator, ['in', '!in'], true)) {
             throw new InvalidArgumentException('Invalid array operator: ' . $operator);
         }
-
-        $this->field    = $field;
         $this->operator = $operator;
         $this->value    = $value;
     }

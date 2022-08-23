@@ -18,8 +18,6 @@ abstract class Entity
 {
     public const IDENTIFIER = 'id';
 
-    protected array $attributes;
-
     /**
      * Sets values array properties.
      * Should handle any casting and value object conversions.
@@ -44,9 +42,8 @@ abstract class Entity
         return static::fromArray($dto->toArray());
     }
 
-    final protected function __construct(array $array)
+    final protected function __construct(protected array $attributes)
     {
-        $this->attributes = $array;
     }
 
     /**

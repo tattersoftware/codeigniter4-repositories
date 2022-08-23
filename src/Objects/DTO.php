@@ -9,9 +9,9 @@ namespace Tatter\Repositories\Objects;
  *
  * Used to pass data between layers.
  *
+ * @AllowDynamicProperties needed for 8.2 but conflicting with Rector
  * @immutable
  */
-#[\AllowDynamicProperties]
 final class DTO extends ValueObject
 {
     /**

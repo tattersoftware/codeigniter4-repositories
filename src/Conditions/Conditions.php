@@ -17,9 +17,8 @@ class Conditions implements IteratorAggregate
      * Entity subclass by the given identifier.
      *
      * @param class-string<Entity> $class
-     * @param int|string           $id
      */
-    public static function fromIdentity(string $class, $id): self
+    public static function fromIdentity(string $class, int|string $id): self
     {
         $condition = new Condition($class::IDENTIFIER, '=', $id);
 

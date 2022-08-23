@@ -13,7 +13,9 @@ $finder = Finder::create()
     ->exclude('build')
     ->append([__FILE__]);
 
-$overrides = [];
+$overrides = [
+    'modernize_strpos' => true,
+];
 
 $options = [
     'finder'    => $finder,
