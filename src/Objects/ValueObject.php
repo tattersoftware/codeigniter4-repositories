@@ -18,8 +18,9 @@ use InvalidArgumentException;
  * - have one or more static named construction methods
  * - have only private properties with getters
  * - define a proper validate() method
+ *
+ * @immutable
  */
-#[Immutable]
 abstract class ValueObject
 {
     /**

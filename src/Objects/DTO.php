@@ -8,9 +8,10 @@ namespace Tatter\Repositories\Objects;
  * Data Transfer Object Class
  *
  * Used to pass data between layers.
+ *
+ * @immutable
  */
-#[AllowDynamicProperties]
-#[Immutable]
+#[\AllowDynamicProperties]
 final class DTO extends ValueObject
 {
     /**

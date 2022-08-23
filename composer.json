@@ -21,7 +21,7 @@
     ],
     "homepage": "https://github.com/tattersoftware/codeigniter4-repositories",
     "require": {
-        "php": "^7.4 || ^8.0"
+        "php": "^8.0"
     },
     "require-dev": {
         "codeigniter4/framework": "^4.1",
