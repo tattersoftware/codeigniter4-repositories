@@ -6,24 +6,45 @@ namespace Tatter\Repositories\Objects;
 
 use OutOfBoundsException;
 
+/**
+ * Abstract Entity Class
+ *
+ * The home of all business logic for an identity object.
+ * Override fromArray() and toArray() with any special handling.
+ * Be sure to leverage Objects\ValueObject for properties that
+ * are composite or complex, or that require validation.
+ */
 abstract class Entity
 {
     public const IDENTIFIER = 'id';
 
     protected array $attributes;
-   
+
     /**
-     * Set values array properties from persistence.
-     * Should handle any casting and value object conversion.
+     * Sets values array properties.
+     * Should handle any casting and value object conversions.
      *
-     * @return array<string, scalar|null>
+     * @param array<string, scalar|null> $array
+     *
+     * @return static
      */
-    public static function fromArray(array $array): static
+    public static function fromArray(array $array): self
     {
         return new static($array);
     }
 
-    private function __construct(array $array)
+    /**
+     * Converts from a data transfer object.
+     * Can be coming from persistence or user input.
+     *
+     * @return static
+     */
+    final public static function fromDTO(DTO $dto): self
+    {
+        return static::fromArray($dto->toArray());
+    }
+
+    final protected function __construct(array $array)
     {
         $this->attributes = $array;
     }
@@ -33,13 +54,13 @@ abstract class Entity
      *
      * @return int|string|null
      */
-    public function getId()
+    final public function getId()
     {
         return $this->{static::IDENTIFIER};
     }
 
     /**
-     * Casts the entity into a values array for persistence.
+     * Gets the values array for persistence.
      *
      * @return array<string, mixed>
      */
@@ -47,13 +68,21 @@ abstract class Entity
     {
         return $this->attributes;
     }
-    
+
+    /**
+     * Casts the entity into a data transfer object (e.g. for persistence).
+     */
+    final public function toDTO(): DTO
+    {
+        return new DTO($this->toArray());
+    }
+
     /**
      * Sets an attribute.
      *
      * @param mixed|null $value
      */
-    public function __set(string $key, $value): void
+    final public function __set(string $key, $value): void
     {
         $this->attributes[$key] = $value;
     }
@@ -61,23 +90,23 @@ abstract class Entity
     /**
      * Gets an attribute.
      *
-     * @throws Exception
+     * @throws OutOfBoundsException
      *
      * @return mixed
      */
-    public function __get(string $key)
+    final public function __get(string $key)
     {
         if (array_key_exists($key, $this->attributes)) {
             return $this->attributes[$key];
         }
 
-        throw OutOfBoundsException('Undefined property: ' . get_class() . "::$key");
+        throw new OutOfBoundsException('Undefined property: ' . self::class . "::{$key}");
     }
 
     /**
      * Checks existence of an attribute.
      */
-    public function __isset(string $key): bool
+    final public function __isset(string $key): bool
     {
         return isset($this->attributes[$key]);
     }
@@ -85,7 +114,7 @@ abstract class Entity
     /**
      * Unsets an attribute property.
      */
-    public function __unset(string $key): void
+    final public function __unset(string $key): void
     {
         unset($this->attributes[$key]);
     }

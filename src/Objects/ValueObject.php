@@ -22,20 +22,35 @@ use InvalidArgumentException;
 #[Immutable]
 abstract class ValueObject
 {
-    public static function equals(static $one, static $two): bool;
+    /**
+     * $var static $one
+     * $var static $two
+     */
+    public static function equals(ValueObject $one, ValueObject $two): bool
+    {
+        $array1 = $one->toArray();
+        $array2 = $two->toArray();
+
+        array_multisort($array1);
+        array_multisort($array2);
+
+        return serialize($array1) === serialize($array2);
+    }
 
     /**
      * @throws InvalidArgumentException
      */
-    protected static function validate()
+    protected static function validate(): void
     {
     }
 
     /**
-     * Casts this into a values array for persistence.
-     * Can be multiple key-value pairs.
+     * Casts this into a values array (e.g. for persistence).
      *
      * @return array<string, mixed>
      */
-    abstract public function toArray(): array;
+    public function toArray(): array
+    {
+        return (array) $this;
+    }
 }

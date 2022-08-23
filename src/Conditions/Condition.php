@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories\Repository;
+namespace Tatter\Repositories\Conditions;
 
 use InvalidArgumentException;
 
@@ -21,19 +21,19 @@ final class Condition
 
     private string $field;
     private string $operator;
-    
+
     /**
-     * @var scalar|null
+     * @var array<int, scalar|null>|scalar|null
      */
     private $value;
 
     public static function fromString(string $input): self
     {
         $segments = explode(' ', $input);
-        if (count($segments < 3)) {
+        if (count($segments) < 3) {
             throw new InvalidArgumentException('Invalid condition string: ' . $input);
         }
-        
+
         $field    = array_shift($segments);
         $operator = array_shift($segments);
         $value    = implode(' ', $segments);
@@ -41,31 +41,39 @@ final class Condition
         return new self($field, $operator, $value);
     }
 
+    /**
+     * @param array<int, scalar|null>|scalar|null $value
+     */
     public function __construct(string $field, string $operator, $value)
     {
-        if (! in_array($operator, self::OPERATORS)) {
+        if (! in_array($operator, self::OPERATORS, true)) {
             throw new InvalidArgumentException('Unknown conditional operation: ' . $operator);
+        }
+
+        // Only allow arrays for array operators
+        if (is_array($value) && ! in_array($operator, ['in', '!in'], true)) {
+            throw new InvalidArgumentException('Invalid array operator: ' . $operator);
         }
 
         $this->field    = $field;
         $this->operator = $operator;
         $this->value    = $value;
     }
-    
-    public getField(): string
+
+    public function getField(): string
     {
         return $this->field;
     }
-    
-    public getOperator(): string
+
+    public function getOperator(): string
     {
         return $this->operator;
     }
-    
+
     /**
-     * @return scalar|null
+     * @return array<int, scalar|null>|scalar|null
      */
-    public getValue()
+    public function getValue()
     {
         return $this->value;
     }
