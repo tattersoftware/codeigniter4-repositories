@@ -9,18 +9,24 @@ namespace Tatter\Repositories\Objects;
  *
  * Used to pass data between layers.
  *
- * @AllowDynamicProperties needed for 8.2 but conflicting with Rector
  * @immutable
  */
 final class DTO extends ValueObject
 {
+    use AttributesTrait;
+
     /**
-     * @param array<string, scalar|null> $array
+     * @param self $one
+     * @param self $two
      */
-    public function __construct(array $array)
+    public static function equals(ValueObject $one, ValueObject $two): bool
     {
-        foreach ($array as $key => $value) {
-            $this->{$key} = $value;
-        }
+        $array1 = $one->toArray();
+        $array2 = $two->toArray();
+
+        array_multisort($array1);
+        array_multisort($array2);
+
+        return serialize($array1) === serialize($array2);
     }
 }
