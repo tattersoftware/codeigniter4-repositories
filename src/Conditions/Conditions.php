@@ -6,7 +6,7 @@ namespace Tatter\Repositories\Conditions;
 
 use ArrayIterator;
 use IteratorAggregate;
-use Tatter\Repositories\Objects\Entity;
+use Tatter\Repositories\Repository\Entity;
 
 class Conditions implements IteratorAggregate
 {

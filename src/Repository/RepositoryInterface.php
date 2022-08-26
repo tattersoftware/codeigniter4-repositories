@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tatter\Repositories\Repository;
 
 use Tatter\Repositories\Conditions\Conditions;
-use Tatter\Repositories\Objects\Entity;
 
 /**
  * @template T of Entity

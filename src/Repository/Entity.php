@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories\Objects;
+namespace Tatter\Repositories\Repository;
 
 use OutOfBoundsException;
 
@@ -11,7 +11,7 @@ use OutOfBoundsException;
  *
  * The home of all business logic for an identity object.
  * Override fromArray() and toArray() with any special handling.
- * Be sure to leverage ValueObjects for properties that
+ * Be sure to leverage value objects for properties that
  * are composite or complex, or that require validation.
  */
 abstract class Entity
