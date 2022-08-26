@@ -8,14 +8,12 @@ use CodeIgniter\Database\BaseBuilder;
 use Config\Database;
 use Generator;
 use RuntimeException;
-use Tatter\Repositories\Conditions\Conditions;
-use Tatter\Repositories\Objects\DTO;
+use Tatter\Repositories\Condition;
 
 /**
  * SQL Database Persistence Class
  *
- * A wrapper for the Query Builder to enforce
- * data types at boundaries.
+ * A wrapper for the Query Builder.
  */
 final class SQLDatabase
 {
@@ -35,8 +33,10 @@ final class SQLDatabase
 
     /**
      * Gets the first row matching the conditions.
+     *
+     * @param Condition[] $conditions
      */
-    public function first(Conditions $conditions): ?DTO
+    public function first(array $conditions): ?array
     {
         $result = $this->builderFromConditions($conditions)
             ->limit(1)
@@ -45,54 +45,62 @@ final class SQLDatabase
             throw new RuntimeException('Query Builder result failed.');
         }
 
-        return $result->getFirstRow(DTO::class);
+        return $result->getResultArray()[0] ?? null;
     }
 
     /**
-     * Gets an item from persistence by its ID.
+     * Yields matching results from persistence.
      *
-     * @returns iterable<DTO>
+     * @param Condition[] $conditions
+     *
+     * @returns iterable<array>
      */
-    public function get(Conditions $conditions): Generator
+    public function get(array $conditions): Generator
     {
         $result = $this->builderFromConditions($conditions)->get();
         if ($result === false) {
             throw new RuntimeException('Query Builder result failed.');
         }
 
-        while ($dto = $result->getUnbufferedRow(DTO::class)) {
-            yield $dto;
+        while ($array = $result->getUnbufferedRow('array')) {
+            yield $array;
         }
     }
 
     /**
      * Inserts a new row into the database.
      */
-    public function insert(DTO $dto): void
+    public function insert(array $data): void
     {
-        (clone $this->builder)->insert($dto->toArray());
+        (clone $this->builder)->insert($data);
     }
 
     /**
      * Updates rows in the database.
+     *
+     * @param Condition[] $conditions
      */
-    public function update(Conditions $conditions, DTO $dto): void
+    public function update(array $conditions, array $data): void
     {
-        $this->builderFromConditions($conditions)->update($dto->toArray());
+        $this->builderFromConditions($conditions)->update($data);
     }
 
     /**
      * Deletes matching items from the database.
+     *
+     * @param Condition[] $conditions
      */
-    public function delete(Conditions $conditions): void
+    public function delete(array $conditions): void
     {
         $this->builderFromConditions($conditions)->delete();
     }
 
     /**
      * Preps a Builder with "where" conditions.
+     *
+     * @param Condition[] $conditions
      */
-    private function builderFromConditions(Conditions $conditions): BaseBuilder
+    private function builderFromConditions(array $conditions): BaseBuilder
     {
         $builder = clone $this->builder;
 
