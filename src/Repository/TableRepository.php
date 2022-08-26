@@ -55,7 +55,7 @@ abstract class TableRepository implements RepositoryInterface
 
         $class = static::ENTITY;
 
-        return $class::fromDTO($result);
+        return $class::fromArray($result);
     }
 
     /**
@@ -67,8 +67,8 @@ abstract class TableRepository implements RepositoryInterface
     {
         $conditions ??= new Conditions();
 
-        foreach ($this->database->get($conditions) as $dto) {
-            yield Entity::fromDTO($dto);
+        foreach ($this->database->get($conditions) as $array) {
+            yield Entity::fromArray($array);
         }
     }
 
@@ -82,13 +82,13 @@ abstract class TableRepository implements RepositoryInterface
     public function save(Entity $entity): void
     {
         if (null === $id = $entity->getId()) {
-            $this->database->insert($entity->toDTO());
+            $this->database->insert($entity->toArray());
 
             return;
         }
 
         $conditions = Conditions::fromIdentity($entity::class, $id);
-        $this->database->update($conditions, $entity->toDTO());
+        $this->database->update($conditions, $entity->toArray());
     }
 
     /**

@@ -9,13 +9,11 @@ use Config\Database;
 use Generator;
 use RuntimeException;
 use Tatter\Repositories\Conditions\Conditions;
-use Tatter\Repositories\Objects\DTO;
 
 /**
  * SQL Database Persistence Class
  *
- * A wrapper for the Query Builder to enforce
- * data types at boundaries.
+ * A wrapper for the Query Builder.
  */
 final class SQLDatabase
 {
@@ -36,7 +34,7 @@ final class SQLDatabase
     /**
      * Gets the first row matching the conditions.
      */
-    public function first(Conditions $conditions): ?DTO
+    public function first(Conditions $conditions): ?array
     {
         $result = $this->builderFromConditions($conditions)
             ->limit(1)
@@ -45,13 +43,13 @@ final class SQLDatabase
             throw new RuntimeException('Query Builder result failed.');
         }
 
-        return $result->getFirstRow(DTO::class);
+        return $result->getResultArray()[0] ?? null;
     }
 
     /**
-     * Gets an item from persistence by its ID.
+     * Yields matching results from persistence.
      *
-     * @returns iterable<DTO>
+     * @returns iterable<array>
      */
     public function get(Conditions $conditions): Generator
     {
@@ -60,25 +58,25 @@ final class SQLDatabase
             throw new RuntimeException('Query Builder result failed.');
         }
 
-        while ($dto = $result->getUnbufferedRow(DTO::class)) {
-            yield $dto;
+        while ($array = $result->getUnbufferedRow('array')) {
+            yield $array;
         }
     }
 
     /**
      * Inserts a new row into the database.
      */
-    public function insert(DTO $dto): void
+    public function insert(array $data): void
     {
-        (clone $this->builder)->insert($dto->toArray());
+        (clone $this->builder)->insert($data);
     }
 
     /**
      * Updates rows in the database.
      */
-    public function update(Conditions $conditions, DTO $dto): void
+    public function update(Conditions $conditions, array $data): void
     {
-        $this->builderFromConditions($conditions)->update($dto->toArray());
+        $this->builderFromConditions($conditions)->update($data);
     }
 
     /**

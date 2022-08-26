@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tatter\Repositories\Objects;
 
+use OutOfBoundsException;
+
 /**
  * Abstract Entity Class
  *
@@ -14,18 +16,7 @@ namespace Tatter\Repositories\Objects;
  */
 abstract class Entity
 {
-    use AttributesTrait;
-
     public const IDENTIFIER = 'id';
-
-    /**
-     * Converts from a data transfer object.
-     * Can be coming from persistence or user input.
-     */
-    final public static function fromDTO(DTO $dto): static
-    {
-        return static::fromArray($dto->toArray());
-    }
 
     /**
      * Returns the identity value if it exists, or null.
@@ -38,11 +29,44 @@ abstract class Entity
     }
 
     /**
-     * Casts the entity into a data transfer object (e.g. for persistence).
+     * Sets attributes from an array in one swoop.
      */
-    final public function toDTO(): DTO
+    public static function fromArray(array $array): static
     {
-        return DTO::fromArray($this->toArray());
+        return new static($array);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    final protected function __construct(protected $attributes)
+    {
+    }
+
+    /**
+     * Gets the attributes.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Gets an attribute.
+     *
+     * @throws OutOfBoundsException
+     *
+     * @return mixed
+     */
+    final public function __get(string $key)
+    {
+        if (array_key_exists($key, $this->attributes)) {
+            return $this->attributes[$key];
+        }
+
+        throw new OutOfBoundsException('Undefined property: ' . self::class . "::{$key}");
     }
 
     /**
@@ -53,6 +77,14 @@ abstract class Entity
     final public function __set(string $key, $value): void
     {
         $this->attributes[$key] = $value;
+    }
+
+    /**
+     * Checks existence of an attribute.
+     */
+    final public function __isset(string $key): bool
+    {
+        return isset($this->attributes[$key]);
     }
 
     /**
