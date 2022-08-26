@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tatter\Repositories\Repository;
 
 use Tatter\Repositories\Condition;
-use Tatter\Repositories\Persistence\SQLDatabase;
+use Tatter\Repositories\Persistence\SimpleBuilder;
 
 /**
  * Table Repository Abstract Class
@@ -24,11 +24,11 @@ abstract class TableRepository implements RepositoryInterface
      */
     public const ENTITY = Entity::class;
 
-    protected SQLDatabase $database;
+    protected SimpleBuilder $database;
 
     final public function __construct()
     {
-        $this->database = SQLDatabase::fromTableName(static::TABLE);
+        $this->database = SimpleBuilder::fromTableName(static::TABLE);
         $this->initialize();
     }
 
