@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories\Conditions;
+namespace Tatter\Repositories;
 
 use InvalidArgumentException;
+use Tatter\Repositories\Repository\Entity;
 
 final class Condition
 {
@@ -38,6 +39,16 @@ final class Condition
         $value    = implode(' ', $segments);
 
         return new self($field, $operator, $value);
+    }
+
+    /**
+     * Returns a condition to match an Entity by the given identifier.
+     *
+     * @param class-string<Entity> $class
+     */
+    public static function fromIdentity(string $class, int|string $id): self
+    {
+        return new self($class::IDENTIFIER, '=', $id);
     }
 
     /**

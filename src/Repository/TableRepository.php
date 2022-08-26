@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tatter\Repositories\Repository;
 
-use Tatter\Repositories\Conditions\Conditions;
+use Tatter\Repositories\Condition;
 use Tatter\Repositories\Persistence\SQLDatabase;
 
 /**
@@ -46,7 +46,7 @@ abstract class TableRepository implements RepositoryInterface
      */
     public function get($id): ?Entity
     {
-        $conditions = Conditions::fromIdentity(static::ENTITY, $id);
+        $conditions = [Condition::fromIdentity(static::ENTITY, $id)];
         $result     = $this->database->first($conditions);
         if ($result === null) {
             return null;
@@ -60,12 +60,12 @@ abstract class TableRepository implements RepositoryInterface
     /**
      * Gets all items, optionally filtering on the set of criteria.
      *
+     * @param Condition[] $conditions
+     *
      * @returns iterable<T>
      */
-    public function list(?Conditions $conditions = null): iterable
+    public function list(array $conditions = []): iterable
     {
-        $conditions ??= new Conditions();
-
         foreach ($this->database->get($conditions) as $array) {
             yield Entity::fromArray($array);
         }
@@ -86,7 +86,7 @@ abstract class TableRepository implements RepositoryInterface
             return;
         }
 
-        $conditions = Conditions::fromIdentity($entity::class, $id);
+        $conditions = [Condition::fromIdentity($entity::class, $id)];
         $this->database->update($conditions, $entity->toArray());
     }
 
@@ -103,7 +103,7 @@ abstract class TableRepository implements RepositoryInterface
             return;
         }
 
-        $conditions = Conditions::fromIdentity($entity::class, $id);
+        $conditions = [Condition::fromIdentity($entity::class, $id)];
         $this->database->delete($conditions);
     }
 }

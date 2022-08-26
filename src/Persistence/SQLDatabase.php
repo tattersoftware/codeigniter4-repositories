@@ -8,7 +8,7 @@ use CodeIgniter\Database\BaseBuilder;
 use Config\Database;
 use Generator;
 use RuntimeException;
-use Tatter\Repositories\Conditions\Conditions;
+use Tatter\Repositories\Condition;
 
 /**
  * SQL Database Persistence Class
@@ -33,8 +33,10 @@ final class SQLDatabase
 
     /**
      * Gets the first row matching the conditions.
+     *
+     * @param Condition[] $conditions
      */
-    public function first(Conditions $conditions): ?array
+    public function first(array $conditions): ?array
     {
         $result = $this->builderFromConditions($conditions)
             ->limit(1)
@@ -49,9 +51,11 @@ final class SQLDatabase
     /**
      * Yields matching results from persistence.
      *
+     * @param Condition[] $conditions
+     *
      * @returns iterable<array>
      */
-    public function get(Conditions $conditions): Generator
+    public function get(array $conditions): Generator
     {
         $result = $this->builderFromConditions($conditions)->get();
         if ($result === false) {
@@ -73,24 +77,30 @@ final class SQLDatabase
 
     /**
      * Updates rows in the database.
+     *
+     * @param Condition[] $conditions
      */
-    public function update(Conditions $conditions, array $data): void
+    public function update(array $conditions, array $data): void
     {
         $this->builderFromConditions($conditions)->update($data);
     }
 
     /**
      * Deletes matching items from the database.
+     *
+     * @param Condition[] $conditions
      */
-    public function delete(Conditions $conditions): void
+    public function delete(array $conditions): void
     {
         $this->builderFromConditions($conditions)->delete();
     }
 
     /**
      * Preps a Builder with "where" conditions.
+     *
+     * @param Condition[] $conditions
      */
-    private function builderFromConditions(Conditions $conditions): BaseBuilder
+    private function builderFromConditions(array $conditions): BaseBuilder
     {
         $builder = clone $this->builder;
 

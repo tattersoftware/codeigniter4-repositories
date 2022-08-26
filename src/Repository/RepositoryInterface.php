@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tatter\Repositories\Repository;
 
-use Tatter\Repositories\Conditions\Conditions;
+use Tatter\Repositories\Condition;
 
 /**
  * @template T of Entity
@@ -21,9 +21,11 @@ interface RepositoryInterface
     /**
      * Gets all items, optionally filtering on the set of criteria.
      *
+     * @param Condition[] $conditions
+     *
      * @return iterable<T>
      */
-    public function list(?Conditions $conditions = null): iterable;
+    public function list(array $conditions = []): iterable;
 
     /**
      * Adds or updates an item in persistence.
