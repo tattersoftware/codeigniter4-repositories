@@ -25,7 +25,7 @@ abstract class Entity
      */
     final public function getId()
     {
-        return $this->{static::IDENTIFIER};
+        return $this->{static::IDENTIFIER} ?? null;
     }
 
     /**
@@ -64,6 +64,10 @@ abstract class Entity
     {
         if (array_key_exists($key, $this->attributes)) {
             return $this->attributes[$key];
+        }
+
+        if ($key === static::IDENTIFIER) {
+            return null;
         }
 
         throw new OutOfBoundsException('Undefined property: ' . self::class . "::{$key}");

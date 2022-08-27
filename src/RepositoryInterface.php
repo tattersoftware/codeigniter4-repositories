@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tatter\Repositories;
 
 /**
- * @template T of Entity
+ * @template TEntity of Entity
  */
 interface RepositoryInterface
 {
     /**
      * Gets an item from persistence by its ID.
      *
-     * @return T|null
+     * @return TEntity|null
      */
     public function get(int|string $id): ?Entity;
 
@@ -21,14 +21,14 @@ interface RepositoryInterface
      *
      * @param Condition[] $conditions
      *
-     * @return iterable<T>
+     * @return iterable<TEntity>
      */
     public function list(array $conditions = []): iterable;
 
     /**
      * Adds or updates an item in persistence.
      *
-     * @param T $entity
+     * @param TEntity $entity
      *
      * @throws RepositoryException
      */
@@ -37,7 +37,7 @@ interface RepositoryInterface
     /**
      * Removes an item from persistence.
      *
-     * @param T $entity
+     * @param TEntity $entity
      *
      * @throws RepositoryException
      */

@@ -59,10 +59,14 @@ final class Condition
             throw new InvalidArgumentException('Unknown conditional operation: ' . $operator);
         }
 
-        // Only allow arrays for array operators
+        // Enforce arrays for array operators
         if (is_array($value) && ! in_array($operator, ['in', '!in'], true)) {
             throw new InvalidArgumentException('Invalid array operator: ' . $operator);
         }
+        if (in_array($operator, ['in', '!in'], true) && ! is_array($value)) {
+            throw new InvalidArgumentException('Missing array for operator: ' . $operator);
+        }
+
         $this->operator = $operator;
         $this->value    = $value;
     }
