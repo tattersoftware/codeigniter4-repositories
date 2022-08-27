@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories\Repository;
+namespace Tatter\Repositories\Repositories;
 
 use Tatter\Repositories\Condition;
-use Tatter\Repositories\Persistence\SQLDatabase;
+use Tatter\Repositories\Entity;
+use Tatter\Repositories\Persistence\SimpleBuilder;
+use Tatter\Repositories\RepositoryException;
+use Tatter\Repositories\RepositoryInterface;
+use UnexpectedValueException;
 
 /**
  * Table Repository Abstract Class
@@ -13,22 +17,25 @@ use Tatter\Repositories\Persistence\SQLDatabase;
  * A repository that sits in front of a single
  * database table, similar to CodeIgniter\Model.
  *
- * @template T of Entity
+ * @template TEntity of Entity
  */
 abstract class TableRepository implements RepositoryInterface
 {
-    public const TABLE = '';
+    public const TABLE  = '';
+    public const ENTITY = '';
 
-    /**
-     * @var class-string<T>
-     */
-    public const ENTITY = Entity::class;
-
-    protected SQLDatabase $database;
+    protected SimpleBuilder $database;
 
     final public function __construct()
     {
-        $this->database = SQLDatabase::fromTableName(static::TABLE);
+        if (empty(static::TABLE)) {
+            throw new UnexpectedValueException('TABLE class constant must be set!');
+        }
+        if (empty(static::ENTITY)) {
+            throw new UnexpectedValueException('ENTITY class constant must be set!');
+        }
+
+        $this->database = SimpleBuilder::fromTableName(static::TABLE);
         $this->initialize();
     }
 
@@ -43,6 +50,8 @@ abstract class TableRepository implements RepositoryInterface
      * Gets an item from persistence by its ID.
      *
      * @param int|string $id
+     *
+     * @return TEntity|null
      */
     public function get($id): ?Entity
     {
@@ -62,19 +71,21 @@ abstract class TableRepository implements RepositoryInterface
      *
      * @param Condition[] $conditions
      *
-     * @returns iterable<T>
+     * @returns iterable<TEntity>
      */
     public function list(array $conditions = []): iterable
     {
+        $class = static::ENTITY;
+
         foreach ($this->database->get($conditions) as $array) {
-            yield Entity::fromArray($array);
+            yield $class::fromArray($array);
         }
     }
 
     /**
      * Adds or updates an item in persistence.
      *
-     * @param T $entity
+     * @param TEntity $entity
      *
      * @throws RepositoryException
      */
@@ -93,7 +104,7 @@ abstract class TableRepository implements RepositoryInterface
     /**
      * Removes an item from persistence.
      *
-     * @param T $entity
+     * @param TEntity $entity
      *
      * @throws RepositoryException
      */

@@ -11,11 +11,11 @@ use RuntimeException;
 use Tatter\Repositories\Condition;
 
 /**
- * SQL Database Persistence Class
+ * Simple Builder Persistence Class
  *
  * A wrapper for the Query Builder.
  */
-final class SQLDatabase
+final class SimpleBuilder
 {
     /**
      * Creates a new SQL persistence object specific to a table.

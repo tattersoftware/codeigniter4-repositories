@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories\Repository;
+namespace Tatter\Repositories;
 
 use RuntimeException;
 

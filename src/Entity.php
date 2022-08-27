@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories\Repository;
+namespace Tatter\Repositories;
 
 use OutOfBoundsException;
 
@@ -25,7 +25,7 @@ abstract class Entity
      */
     final public function getId()
     {
-        return $this->{static::IDENTIFIER};
+        return $this->{static::IDENTIFIER} ?? null;
     }
 
     /**
@@ -66,7 +66,11 @@ abstract class Entity
             return $this->attributes[$key];
         }
 
-        throw new OutOfBoundsException('Undefined property: ' . self::class . "::{$key}");
+        if ($key === static::IDENTIFIER) {
+            return null;
+        }
+
+        throw new OutOfBoundsException('Undefined property: ' . static::class . "::{$key}");
     }
 
     /**
