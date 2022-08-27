@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tatter\Repositories;
 
 use InvalidArgumentException;
-use Tatter\Repositories\Repository\Entity;
 
 final class Condition
 {

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories\Repository;
-
-use Tatter\Repositories\Condition;
+namespace Tatter\Repositories;
 
 /**
  * @template T of Entity

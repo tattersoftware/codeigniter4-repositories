@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tatter\Repositories\Repository;
+namespace Tatter\Repositories\Repositories;
 
 use Tatter\Repositories\Condition;
+use Tatter\Repositories\Entity;
 use Tatter\Repositories\Persistence\SimpleBuilder;
+use Tatter\Repositories\RepositoryException;
+use Tatter\Repositories\RepositoryInterface;
 
 /**
  * Table Repository Abstract Class
