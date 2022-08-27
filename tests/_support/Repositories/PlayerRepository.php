@@ -9,6 +9,7 @@ use Tatter\Repositories\Repositories\TableRepository;
 
 /**
  * @extends TableRepository<Player>
+ *
  * @internal
  */
 final class PlayerRepository extends TableRepository

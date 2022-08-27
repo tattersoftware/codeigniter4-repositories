@@ -19,7 +19,7 @@ use Traversable;
 final class TableRepositoryTest extends DatabaseTestCase
 {
     private PlayerRepository $players;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -63,7 +63,7 @@ final class TableRepositoryTest extends DatabaseTestCase
         $row = fake(PlayerModel::class);
 
         $result = $this->players->get($row['id']);
-        
+
         $this->assertInstanceOf(Player::class, $result);
         $this->assertSame($row['id'], $result->getId());
         $this->assertSame($row['name'], $result->name);
@@ -111,8 +111,8 @@ final class TableRepositoryTest extends DatabaseTestCase
 
     public function testSavesUPdatesExisting(): void
     {
-        $row    = fake(PlayerModel::class);
-        $player = Player::fromArray($row);
+        $row              = fake(PlayerModel::class);
+        $player           = Player::fromArray($row);
         $player->position = 'Midlane';
 
         $this->players->save($player);
@@ -131,8 +131,44 @@ final class TableRepositoryTest extends DatabaseTestCase
 
         $result = $this->players->list([$condition]);
         $this->assertInstanceOf(Traversable::class, $result);
-        
+
         $players = iterator_to_array($result);
         $this->assertCount(2, $players);
+    }
+
+    public function testListsIn(): void
+    {
+        $ids = [];
+
+        for ($i = 0; $i < 2; $i++) {
+            $player = fake(PlayerModel::class, [
+                'position' => 'Roaming',
+            ]);
+            $ids[] = $player['id'];
+        }
+        $condition = new Condition('id', 'in', $ids);
+
+        $result = $this->players->list([$condition]);
+        $this->assertInstanceOf(Traversable::class, $result);
+
+        $players = iterator_to_array($result);
+        $this->assertCount(2, $players);
+    }
+
+    public function testListsNotIn(): void
+    {
+        for ($i = 0; $i < 2; $i++) {
+            $player = fake(PlayerModel::class, [
+                'position' => 'Roaming',
+            ]);
+        }
+        $condition = new Condition('id', '!in', [$player['id']]);
+
+        $result = $this->players->list([$condition]);
+        $this->assertInstanceOf(Traversable::class, $result);
+
+        $players = iterator_to_array($result);
+        $this->assertCount(1, $players);
+        $this->assertNotSame($player['id'], $players[0]->getId());
     }
 }

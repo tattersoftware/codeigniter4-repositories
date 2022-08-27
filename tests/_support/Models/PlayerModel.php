@@ -9,12 +9,12 @@ use Faker\Generator;
 
 class PlayerModel extends Model
 {
-    protected $table              = 'players';
-    protected $returnType         = 'array';
-    protected $useSoftDeletes     = true;
-    protected $allowedFields      = ['name', 'position'];
-    protected $useTimestamps      = true;
-    protected $validationRules    = [
+    protected $table           = 'players';
+    protected $returnType      = 'array';
+    protected $useSoftDeletes  = true;
+    protected $allowedFields   = ['name', 'position'];
+    protected $useTimestamps   = true;
+    protected $validationRules = [
         'name'     => 'required|string|max_length[255]',
         'position' => 'permit_empty|string',
     ];

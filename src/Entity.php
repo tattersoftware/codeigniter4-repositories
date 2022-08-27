@@ -70,7 +70,7 @@ abstract class Entity
             return null;
         }
 
-        throw new OutOfBoundsException('Undefined property: ' . self::class . "::{$key}");
+        throw new OutOfBoundsException('Undefined property: ' . static::class . "::{$key}");
     }
 
     /**

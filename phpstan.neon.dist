@@ -13,6 +13,7 @@ parameters:
 	universalObjectCratesClasses:
 		- CodeIgniter\Entity
 		- CodeIgniter\Entity\Entity
+		- Tatter\Repositories\Entity
 		- Faker\Generator
 	scanDirectories:
 		- vendor/codeigniter4/framework/system/Helpers

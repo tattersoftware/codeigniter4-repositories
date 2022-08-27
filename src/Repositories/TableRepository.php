@@ -21,7 +21,7 @@ use UnexpectedValueException;
  */
 abstract class TableRepository implements RepositoryInterface
 {
-    public const TABLE = '';
+    public const TABLE  = '';
     public const ENTITY = '';
 
     protected SimpleBuilder $database;
